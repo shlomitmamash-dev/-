@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מצפן הפעולה | תפיסת פק"ל 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEEAE0;
+    --paper-2:#E4DFD1;
+    --ink:#23211C;
+    --ink-soft:#5B564A;
+    --line:#CFC8B5;
+    --card:#F7F5EE;
+    --meaning:#AD8748;
+    --capability:#A15C3B;
+    --clarity:#3F6572;
+    --belonging:#5E7C4C;
+    --trust:#37456A;
+    --routines:#77614E;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Heebo',sans-serif;
+    line-height:1.55;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:36px 22px 80px;}
+
+  header.hero{
+    padding:8px 0 28px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:28px;
+  }
+  .kicker{
+    font-size:14px;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  h1{
+    font-family:'Frank Ruhl Libre',serif;
+    font-weight:700;
+    font-size:clamp(32px,5vw,46px);
+    margin:0 0 10px;
+    line-height:1.15;
+  }
+  .lede{
+    max-width:640px;
+    color:var(--ink-soft);
+    font-size:16px;
+  }
+
+  nav.tabs{
+    display:flex;
+    gap:6px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:30px;
+    flex-wrap:wrap;
+  }
+  nav.tabs button{
+    background:none;
+    border:none;
+    font-family:'Heebo',sans-serif;
+    font-size:16px;
+    font-weight:600;
+    color:var(--ink-soft);
+    padding:12px 6px;
+    margin-left:22px;
+    cursor:pointer;
+    position:relative;
+    top:1px;
+  }
+  nav.tabs button.active{
+    color:var(--ink);
+    border-bottom:3px solid var(--capability);
+  }
+  nav.tabs button:hover{color:var(--ink);}
+
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  h2.panel-title{
+    font-family:'Frank Ruhl Libre',serif;
+    font-size:24px;
+    font-weight:500;
+    margin:0 0 4px;
+  }
+  .panel-sub{
+    color:var(--ink-soft);
+    font-size:14.5px;
+    margin:0 0 22px;
+    max-width:600px;
+  }
+
+  .choice-group{margin-bottom:22px;}
+  .choice-label{
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin-bottom:8px;
+  }
+  .choice-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:9px 16px;
+    font-size:14.5px;
+    font-family:'Heebo',sans-serif;
+    cursor:pointer;
+    color:var(--ink);
+    transition:background .15s,border-color .15s;
+  }
+  .chip small{display:block;color:var(--ink-soft);font-size:12px;margin-top:2px;font-weight:400;}
+  .chip.selected{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:var(--paper);
+  }
+  .chip.selected small{color:#cfcabf;}
+  .chip:hover:not(.selected){border-color:var(--ink);}
+
+  .results{margin-top:28px;}
+  .res-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-right:5px solid var(--ink);
+    border-radius:2px;
+    padding:18px 20px;
+    margin-bottom:14px;
+  }
+  .res-card h3{
+    font-family:'Frank Ruhl Libre',serif;
+    font-size:18px;
+    margin:0 0 4px;
+    font-weight:700;
+  }
+  .res-card .res-def{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:0 0 10px;
+  }
+  .res-card .res-action{
+    font-size:15.5px;
+    margin:0;
+  }
+  .tag{
+    display:inline-block;
+    font-size:11.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+    background:var(--paper-2);
+    border-radius:20px;
+    padding:2px 10px;
+    margin-inline-end:6px;
+  }
+
+  textarea{
+    width:100%;
+    font-family:'Heebo',sans-serif;
+    font-size:15px;
+    padding:14px;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--card);
+    resize:vertical;
+    min-height:110px;
+    color:var(--ink);
+  }
+  textarea:focus{outline:2px solid var(--clarity);outline-offset:1px;}
+
+  .btn{
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    padding:12px 26px;
+    font-size:15px;
+    font-family:'Heebo',sans-serif;
+    font-weight:600;
+    border-radius:3px;
+    cursor:pointer;
+    margin-top:12px;
+  }
+  .btn:hover{background:#000;}
+  .btn:disabled{opacity:.5;cursor:default;}
+
+  .loading{
+    margin-top:18px;
+    color:var(--ink-soft);
+    font-size:14.5px;
+  }
+  .error-box{
+    margin-top:18px;
+    background:#F3E5DE;
+    border:1px solid var(--capability);
+    color:var(--ink);
+    padding:12px 16px;
+    border-radius:3px;
+    font-size:14px;
+  }
+
+  .diagnosis{
+    margin-top:26px;
+    padding:20px 22px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:2px;
+  }
+  .diagnosis .who{
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  .diagnosis h3{
+    font-family:'Frank Ruhl Libre',serif;
+    font-size:22px;
+    margin:0 0 10px;
+  }
+  .diagnosis p.reasoning{
+    font-size:15px;
+    margin:0 0 18px;
+  }
+  .sugg-list{list-style:none;margin:0;padding:0;}
+  .sugg-list li{
+    padding:12px 0;
+    border-top:1px solid var(--line);
+    font-size:15px;
+  }
+  .sugg-list li:first-child{border-top:none;}
+
+  .stage-group{margin-bottom:26px;}
+  .stage-group h4{
+    font-family:'Frank Ruhl Libre',serif;
+    font-size:17px;
+    font-weight:500;
+    margin:0 0 10px;
+    padding-bottom:6px;
+    border-bottom:1px solid var(--line);
+  }
+  .space-row{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+    margin-bottom:6px;
+  }
+  @media(min-width:680px){
+    .space-row{grid-template-columns:1fr 1fr 1fr;}
+  }
+  .space-cell{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:12px 14px;
+  }
+  .space-cell .space-label{
+    font-size:12px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin-bottom:5px;
+  }
+  .space-cell p{margin:0;font-size:14.5px;}
+
+  footer{
+    margin-top:56px;
+    padding-top:18px;
+    border-top:1px solid var(--line);
+    font-size:12.5px;
+    color:var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="kicker">כלי עבודה לצוות מעגל השירות</div>
+    <h1>מצפן הפעולה</h1>
+    <p class="lede">מבוסס על תפיסת החוסן הגדודית ומסמך הפעולות של פק"ל 2026. בחרו שלב ותפקיד, תארו סיטואציה, או בחרו משאב לחיזוק — והכלי יציג את הפעולות הרלוונטיות.</p>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="stage">שלב ותפקיד</button>
+    <button class="tab-btn" data-tab="situation">תיאור סיטואציה</button>
+    <button class="tab-btn" data-tab="resource">חיזוק משאב</button>
+  </nav>
+
+  <!-- TAB A: STAGE + ROLE -->
+  <section class="panel active" id="panel-stage">
+    <h2 class="panel-title">לפי שלב במעגל השירות ותפקיד</h2>
+    <p class="panel-sub">בחרו היכן אתם נמצאים בציר הזמן ומה תפקידכם — ותקבלו את הפעולה המומלצת בכל אחד מששת המשאבים.</p>
+
+    <div class="choice-group">
+      <div class="choice-label">שלב במעגל השירות</div>
+      <div class="choice-row" id="stage-choices"></div>
+    </div>
+
+    <div class="choice-group">
+      <div class="choice-label">התפקיד שלכם</div>
+      <div class="choice-row" id="role-choices"></div>
+    </div>
+
+    <div class="results" id="stage-results"></div>
+  </section>
+
+  <!-- TAB B: SITUATION -->
+  <section class="panel" id="panel-situation">
+    <h2 class="panel-title">תיאור סיטואציה חופשי</h2>
+    <p class="panel-sub">תארו במילים שלכם מה קורה בפלוגה, בצוות או אצל משרת מסוים. הכלי יתאים את התיאור לביטויים האופייניים לכל משאב, ויציע פעולות מתוך מסמך הפעולות. הזיהוי מבוסס על התאמת מילות מפתח ולא על הבנה מלאה של השפה — לתוצאה הטובה ביותר נסו לתאר את הקושי בפירוט, במילים פשוטות.</p>
+
+    <div class="choice-group">
+      <div class="choice-label">שלב נוכחי (רשות — עוזר לדייק את ההמלצה)</div>
+      <div class="choice-row" id="situation-stage-choices"></div>
+    </div>
+
+    <textarea id="situation-input" placeholder="לדוגמה: החיילים בצוות שלי מתלוננים שהם לא יודעים מתי הם משתחררים, ומועדי היציאות משתנים כל הזמן בלי הודעה מראש..."></textarea>
+    <br>
+    <button class="btn" id="analyze-btn">נתחו סיטואציה</button>
+
+    <div id="situation-loading"></div>
+    <div id="situation-error"></div>
+    <div id="situation-result"></div>
+  </section>
+
+  <!-- TAB C: RESOURCE -->
+  <section class="panel" id="panel-resource">
+    <h2 class="panel-title">לפי משאב שברצונכם לחזק</h2>
+    <p class="panel-sub">בחרו משאב חוסן — ותקבלו את כלל הפעולות המומלצות לחיזוקו, לפי שלב במעגל השירות ומרחב פעולה.</p>
+
+    <div class="choice-group">
+      <div class="choice-label">משאב</div>
+      <div class="choice-row" id="resource-choices"></div>
+    </div>
+
+    <div class="results" id="resource-results"></div>
+  </section>
+
+  <footer>
+    מבוסס על "תפיסת פק"ל 2026" ומסמך הפעולות הנלווה. הכלי מארגן את התוכן לצורך נגישות ואינו מחליף עיון במסמכי המקור.
+  </footer>
+</div>
+
+<script>
+const RESOURCES = [
+  {id:'meaning', name:'משמעות', color:'var(--meaning)', desc:'החיבור של הפרט והמסגרת לתכלית, לערכים ולמטרה הרחבה שלשמה הם פועלים — לא רק מה נדרש לעשות, אלא לשם מה.'},
+  {id:'capability', name:'מסוגלות והשפעה', color:'var(--capability)', desc:'האמונה והביטחון של הפרט והמסגרת שיש בידיהם היכולת, המקצועיות ושיקול הדעת להתמודד עם האתגרים, לפעול ולהשפיע על המציאות ולהצליח במשימה.'},
+  {id:'clarity', name:'בהירות ושליטה', color:'var(--clarity)', desc:'היכולת להבין את המציאות, לדעת מה נדרש ולמה לצפות, ולייצר סדר ועוגנים יציבים גם בתוך מציאות משתנה ולא ודאית.'},
+  {id:'belonging', name:'שייכות ולכידות', color:'var(--belonging)', desc:'תחושת ה"אנחנו" והיכולת של אנשי המסגרת להיות מחוברים זה לזה, לזהות משותפת ולמשימה, ולפעול יחד כמערכת אחת גם בתנאי עומס.'},
+  {id:'trust', name:'אמון בפיקוד', color:'var(--trust)', desc:'הביטחון של המשרתים והמסגרת במפקדיהם — במקצועיותם, בשיקול דעתם וביכולתם להוביל לעמידה במשימה, מתוך אחריות והוגנות.'},
+  {id:'routines', name:'מנגנונים ושגרות', color:'var(--routines)', desc:'התשתיות ותהליכי העבודה הקבועים המאפשרים למסגרת לפעול באופן סדור, עקבי ורציף לאורך זמן.'},
+];
+
+const STAGES = [
+  {id:'before', name:'לפני תעסוקה'},
+  {id:'during', name:'בתעסוקה'},
+  {id:'end', name:'בסיום תעסוקה'},
+  {id:'between', name:'בין תעסוקות'},
+];
+
+const SPACES = [
+  {id:'individual', name:'פרט', role:'מפקד ישיר (מ״מ / מ״פ)'},
+  {id:'community', name:'קהילה', role:'מוביל לכידות / מובילת עורף'},
+  {id:'framework', name:'מסגרת', role:'צוות מעגל השירות / מג״ד-סמג״ד'},
+];
+
+const ACTIONS = {
+  meaning: {
+    before: {individual:'קיימו שיחה אישית המחברת בין תפקיד הלוחם, יכולותיו ותרומתו הייחודית לבין המשימה.',
+      community:'קיימו מפגש הכנה ללוחמים ולמשפחות, הכירו במחיר האזרחי וחברו את הקהילה לתכלית השירות.',
+      framework:'קיימו "מפקדים בשער" ופרסמו איגרת מג״ד המבהירה את המשימה, נחיצותה וצדקת הדרך.'},
+    during: {individual:'שקפו ללוחם כיצד פעולתו היומיומית תורמת למשימה ולצוות, והכירו במאמץ ובהישגים.',
+      community:'שלבו מורשת, סיפורי יחידה ושיח ערכי בצוותים ובמפגשים משותפים.',
+      framework:'קיימו שיחות מפקדים ועדכון שבועי המחברים בין הפעילות, הישגי היחידה והיעד המבצעי.'},
+    end: {individual:'קיימו שיחת סיכום אישית המוקירה את התרומה ומסייעת ללוחם לנסח מה הוא לוקח מהשירות.',
+      community:'קיימו מעגלי סיכום סביב תרומה, גאווה, למידה והוקרת תודה.',
+      framework:'ערכו טקס מסכם ותחקור מצמיח המעניקים פשר לחוויה ומחברים אותה לזהות היחידתית.'},
+    between: {individual:'הכירו גם בתרומה האזרחית של המשרת וסייעו במיצוי זכויות כביטוי להוקרה.',
+      community:'תעדו והפיצו סיפורי לוחמים, יוזמות ועסקים של משרתים ברשת הקהילתית.',
+      framework:'קיימו פעולות מורשת והנצחה וציינו מועדים ואירועים משמעותיים בתולדות היחידה.'},
+  },
+  capability: {
+    before: {individual:'מפו צרכים, כשירויות וחסמים ובנו עם כל לוחם מענה מקדים המחזק מוכנות ושליטה.',
+      community:'תרגלו בצוותים כלים להתמודדות, תמיכה ועזרה ראשונה נפשית, תוך מתן לגיטימציה לחששות.',
+      framework:'קיימו אימון מקצועי והכנה מנטלית; הבהירו סטנדרטים ובנו ביטחון במפקדים, בצוות וביכולת המבצעית.'},
+    during: {individual:'הגדירו לכל לוחם אחריות מותאמת, תנו משוב על התקדמות ואפשרו זמן ומרחב ללימודים ולעבודה כשניתן.',
+      community:'קיימו שיחות משאבים, למידת עמיתים ועיבוד קצר לאחר אירועים מאתגרים.',
+      framework:'שמרו על אימון וכושר, בצעו תחקור מקצועי והפעילו מענה פיקודי ומקצועי מדורג בעת קושי.'},
+    end: {individual:'תנו משוב אישי מבוסס חוזקות והכינו את הלוחם למעבר הדרגתי הביתה.',
+      community:'קיימו עיבוד קבוצתי המדגיש התמודדות, צמיחה, למידה ויכולת להמשך.',
+      framework:'קיימו הכנה מובנית לחזרה הביתה והגדירו מעקב יזום אחר מי שזקוק לליווי.'},
+    between: {individual:'חברו למענים נפשיים, זוגיים, תעסוקתיים או לימודיים וחזקו התפתחות אישית ומקצועית.',
+      community:'הפעילו הרצאות, סדנאות ורשת למידת עמיתים המבוססות על הידע של אנשי היחידה.',
+      framework:'שלחו מפקדים ולוחמים להכשרות חוסן, מנהיגות ומקצוע וסנכרנו מענים עם גופי המקצוע.'},
+  },
+  clarity: {
+    before: {individual:'ערכו תיאום ציפיות אישי על משך השירות, היציאות, התפקיד והמענה לצרכים מיוחדים.',
+      community:'פתחו ערוצי מידע נפרדים ומוגדרים ללוחמים ולמשפחות והבהירו למי פונים בכל נושא.',
+      framework:'פרסמו מוקדם ככל האפשר לו"ז, מדיניות יציאות ומנהלות; הציגו מה ידוע, מה טרם ידוע ומתי יתעדכן.'},
+    during: {individual:'הגדירו סדר יום, משמרות, משימות וכתובת פיקודית ברורה, ועדכנו בשינויים בזמן.',
+      community:'קיימו שגרת עדכונים קבועה והבחינו בין מידע מאומת, הערכה ושמועה.',
+      framework:'נהלו תמונת מצב סד"כ ושעון לחימה, הפיצו עדכון אמין ורציף וצמצמו שינויים לא הכרחיים.'},
+    end: {individual:'תאמו ציפיות לקראת החזרה למשפחה, לעבודה וללימודים והנגישו זכויות רלוונטיות.',
+      community:'עדכנו משפחות במועד הסיום ובהגעה הצפויה, תוך סימון ששינויים מבצעיים עדיין אפשריים.',
+      framework:'הפעילו פקודת שחרור והזדכות סדורה, הגדירו לוחות זמנים ומנעו עיכובים שאינם הכרחיים.'},
+    between: {individual:'עקבו אחר פניות שלא נסגרו ועדכנו את הלוחם בסטטוס ובאחריות להמשך הטיפול.',
+      community:'שמרו על עדכון תקופתי ענייני, בלי להציף את ערוצי הקשר.',
+      framework:'פרסמו גרף שנתי ועדכונים מוקדמים ככל האפשר על אימונים וסבבים עתידיים.'},
+  },
+  belonging: {
+    before: {individual:'בררו את תמונת המשפחה, העבודה והלימודים; בנו תוכנית תמיכה והצמידו כתובת אישית בעת הצורך.',
+      community:'חברו לוחמים ומשפחות לרשתות התמיכה והפעילו מובילי לכידות ומובילות עורף.',
+      framework:'שמרו על מסגרות אורגניות ככל האפשר והקימו מערך עורף מתואם, נגיש ורגיש לצרכים.'},
+    during: {individual:'קיימו התעניינות אישית רציפה, אפשרו קשר עם הבית ודאגו למנוחה ולמענה לצורכי פרט.',
+      community:'טפחו תמיכת עמיתים, ארוחות ומפגשים משותפים, קשר למשפחות וסיוע הדדי בעת משבר.',
+      framework:'הפעילו את מערך הפרט והעורף, תאמו מענים עם רשויות וגופים אזרחיים ודאגו לכוחות חבירים.'},
+    end: {individual:'תכננו עם הלוחם את החזרה הביתה וזיהו מי זקוק לליווי נוסף.',
+      community:'קיימו שיח צוותי או זוגי על המעבר, הוקרה הדדית וסיום הקשר המבצעי.',
+      framework:'לוו פצועים, משפחות שכולות ומשפחות במצוקה, והבטיחו רציפות טיפול מעבר למועד השחרור.'},
+    between: {individual:'שמרו על קשר באירועי חיים ובנקודות קושי, בלי לייצר תחושת מעקב או חובה.',
+      community:'קיימו מפגשי משפחות, קבוצות עניין ורשתות עזרה הדדית המחזקות קשר גם באזרחות.',
+      framework:'מסדו קשר עם פצועים ומשפחות שכולות וקיימו פעולות קהילה, הוקרה והנצחה.'},
+  },
+  trust: {
+    before: {individual:'קיימו שיחה יזומה, הקשיבו לצרכים והסבירו בכנות אילו מענים אפשריים ואילו לא.',
+      community:'אפשרו שיח פתוח וריאלי על האתגר, המחיר והציפיות ההדדיות.',
+      framework:'פתחו את עבודת הצוות הפיקודי, תאמו מדיניות והכינו את המפקדים לניהול אנשים לצד המשימה.'},
+    during: {individual:'הפעילו שיקול דעת רגיש ועקבי, עמדו בהבטחות והסבירו החלטות המשפיעות על הפרט.',
+      community:'קיימו שיחות רב־מדרגיות בגובה העיניים, הקשיבו, השיבו וטפלו בפערים.',
+      framework:'הפגינו דוגמה אישית, מקצועיות ונוכחות; יישמו מדיניות הוגנת ושמרו קשר עם כלל הכוחות.'},
+    end: {individual:'קיימו שיחת שחרור או שינוי תפקיד שקופה, מכבדת ומוקירה.',
+      community:'קיימו שיחת מפקד מסכמת הנותנת מקום להצלחות, לקשיים ולפערים שלא טופלו.',
+      framework:'הובילו תחקיר פתוח ומצמיח, קחו אחריות והבטיחו המשך טיפול בנושאים שנותרו פתוחים.'},
+    between: {individual:'יזמו קשר תקופתי מדוד ובדקו הסתגלות וצרכים, במיוחד לאחר שירות מורכב.',
+      community:'שמרו תרבות של נגישות, הדדיות ואמון גם במרחב האזרחי.',
+      framework:'הישארו כתובת פיקודית לסיוע והפגינו נוכחות באירועי קהילה, זיכרון ומשבר.'},
+  },
+  routines: {
+    before: {individual:'בצעו מיפוי צרכים וכשירויות אישי ועדכנו סימון רגיש ומוגן של פערים הדורשים טיפול.',
+      community:'הפעילו את רשת מובילי הלכידות ומובילות העורף וקיימו הכנה למשפחות.',
+      framework:'כנסו את צוות מעגל השירות, הגדירו תפקידים וממשקים ואשרו תוכנית עבודה מבוססת אבחון.'},
+    during: {individual:'נהלו מעקב אחר פניות פרט, הנגישו סל מענים וסגרו מעגל טיפול מול הלוחם.',
+      community:'הפעילו מכלול עורף ורשת סוכני שינוי וסנכרנו מענים למשפחות ולקהילה.',
+      framework:'קיימו הערכת מצב שבועית של צוות מעגל השירות, שלבו מדדי חוסן ותכננו התרעננות בפקודה.'},
+    end: {individual:'בצעו איתור פרטני של תגובות מצוקה, מסרו כתובות סיוע והגדירו מעקב.',
+      community:'קיימו שולחן מענים מתואם למיצוי זכויות ולהעברת טיפול לגורמים בקהילה.',
+      framework:'יישמו פרוטוקול סגירת משימה הכולל עיבוד, תחקור, הכנה לבית וסיכום צוות מעגל השירות.'},
+    between: {individual:'עקבו אחר מימוש זכויות ומענים ועדכנו את מיפוי הצרכים לקראת הסבב הבא.',
+      community:'הפעילו תקציבים ויוזמות קהילתיות בהתאם לצורך שנמדד ולא כאירוע חד־פעמי.',
+      framework:'יישמו תוכנית "בין הזמנים", בצעו בקרה ולמידה ועדכנו תוכנית עבודה וכלי אבחון לסבב הבא.'},
+  },
+};
+
+function resourceById(id){ return RESOURCES.find(r=>r.id===id); }
+function stageById(id){ return STAGES.find(s=>s.id===id); }
+function spaceById(id){ return SPACES.find(s=>s.id===id); }
+
+// ---------- Tabs ----------
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ---------- TAB A: stage + role ----------
+let selStage = null, selSpace = null;
+
+function renderChips(containerId, items, labelFn, subFn, onSelect){
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
+  items.forEach(item=>{
+    const chip = document.createElement('div');
+    chip.className='chip';
+    chip.innerHTML = `${labelFn(item)}${subFn? `<small>${subFn(item)}</small>`:''}`;
+    chip.addEventListener('click', ()=>{
+      c.querySelectorAll('.chip').forEach(x=>x.classList.remove('selected'));
+      chip.classList.add('selected');
+      onSelect(item);
+    });
+    c.appendChild(chip);
+  });
+}
+
+renderChips('stage-choices', STAGES, s=>s.name, null, s=>{ selStage = s.id; renderStageResults(); });
+renderChips('role-choices', SPACES, s=>s.role, s=>`מרחב: ${s.name}`, s=>{ selSpace = s.id; renderStageResults(); });
+
+function renderStageResults(){
+  const el = document.getElementById('stage-results');
+  if(!selStage || !selSpace){ el.innerHTML=''; return; }
+  const spaceObj = spaceById(selSpace);
+  let html = `<p class="panel-sub" style="margin-bottom:16px;">פעולות מומלצות עבור <strong>${spaceObj.role}</strong> בשלב <strong>${stageById(selStage).name}</strong>, לפי ששת המשאבים:</p>`;
+  RESOURCES.forEach(r=>{
+    const action = ACTIONS[r.id][selStage][selSpace];
+    html += `
+      <div class="res-card" style="border-right-color:${r.color}">
+        <h3>${r.name}</h3>
+        <p class="res-def">${r.desc}</p>
+        <p class="res-action">${action}</p>
+      </div>`;
+  });
+  el.innerHTML = html;
+}
+
+// ---------- TAB B: situation ----------
+let selSituationStage = null;
+renderChips('situation-stage-choices', STAGES, s=>s.name, null, s=>{
+  document.querySelectorAll('#situation-stage-choices .chip').forEach(c=>c.classList.remove('selected'));
+  selSituationStage = s.id;
+});
+// allow deselect by clicking a "no stage" option - add manually
+(function addNoStageOption(){
+  const c = document.getElementById('situation-stage-choices');
+  const chip = document.createElement('div');
+  chip.className='chip selected';
+  chip.textContent='לא ידוע / כל השלבים';
+  chip.addEventListener('click', ()=>{
+    c.querySelectorAll('.chip').forEach(x=>x.classList.remove('selected'));
+    chip.classList.add('selected');
+    selSituationStage = null;
+  });
+  c.insertBefore(chip, c.firstChild);
+})();
+
+document.getElementById('analyze-btn').addEventListener('click', analyzeSituation);
+
+// Keyword sets per resource, used for fully client-side matching (no server / API required).
+const RESOURCE_KEYWORDS = {
+  meaning: ['משמעות','תכלית','שליחות','בשביל מה','למה בכלל','אין טעם','אין הטעם','מיותר','מיותרים','חוסר תכלית','לא מבינים למה','לא ברור למה','ייאוש','חוסר הכרה','לא רואים אותנו','לא מוקירים','מוטיבציה נמוכה','אין חיבור למשימה','לשם מה','חסר פשר','אדישות','למה אנחנו כאן'],
+  capability: ['מסוגלות','לא מסוגלים','לא מסוגל','לא מיומנים','חסר אימון','לא מאומנים','פחד מכישלון','לא בטוחים ביכולת','חסרי אונים','תחושת כישלון','לא נותנים להם אחריות','אין מרחב השפעה','אין שיקול דעת','ביטחון עצמי נמוך','לא יודעים לבצע','חוסר ביטחון','לא מצליחים','חוששים מהמשימה','לא מאמינים בעצמם'],
+  clarity: ['אי ודאות','לא ודאי','לא יודעים מה קורה','משתנה כל הזמן','בלי הודעה מראש','בלגן','חוסר סדר','לא ברור','אין בהירות','שמועות','לא מעדכנים','חוסר תיאום','מתי משתחררים','מתי יוצאים','לא יודעים למה לצפות','שינויים תכופים','חוסר שליטה','אין תוכנית','לא מתואם'],
+  belonging: ['בודדים','בדידות','לא מרגישים שייכים','שייכות','לא מחוברים','מריבות','קונפליקט','פירוק חברתי','לא נקלטים','מתבודדים','אין רעות','חוסר לכידות','לא מרגישים חלק','ריחוק חברתי','חדשים בצוות','לא משתלבים','מתוחים אחד עם השני'],
+  trust: ['לא סומכים על המפקד','חוסר אמון','הבטחות שלא מתקיימות','לא הוגן','אי הוגנות','חוסר שקיפות','מפקד לא זמין','תחושת עוול','אפליה','לא מאמינים למפקד','חוסר אמינות','מפקד לא אמין','לא מקשיבים לנו','החלטות שרירותיות'],
+  routines: ['אין סדר','כאוס','אין תהליך','נופל בין הכיסאות','נופלים בין הכיסאות','אין מעקב','בלגן ארגוני','אלתור','אין אחראי','אין שגרה','חוסר מנגנון','אין תיעוד','לא עוקבים','אין גורם אחראי','לא ברור מי אחראי'],
+};
+
+function localAnalyzeSituation(text){
+  const normalized = text.replace(/["'׳״]/g,'');
+  const scores = {};
+  const matches = {};
+  RESOURCES.forEach(r=>{ scores[r.id]=0; matches[r.id]=[]; });
+
+  Object.keys(RESOURCE_KEYWORDS).forEach(resId=>{
+    RESOURCE_KEYWORDS[resId].forEach(kw=>{
+      if(normalized.includes(kw)){
+        scores[resId] += 1;
+        matches[resId].push(kw);
+      }
+    });
+  });
+
+  const ranked = RESOURCES.map(r=>({id:r.id, score:scores[r.id], matched:matches[r.id]}))
+    .sort((a,b)=>b.score-a.score);
+
+  return ranked;
+}
+
+function analyzeSituation(){
+  const input = document.getElementById('situation-input').value.trim();
+  const errorEl = document.getElementById('situation-error');
+  const resultEl = document.getElementById('situation-result');
+  errorEl.innerHTML = '';
+  resultEl.innerHTML = '';
+
+  if(!input){
+    errorEl.innerHTML = '<div class="error-box">אנא תארו את הסיטואציה לפני הניתוח.</div>';
+    return;
+  }
+
+  const ranked = localAnalyzeSituation(input);
+  const top = ranked[0];
+  const second = ranked[1];
+
+  if(!top || top.score === 0){
+    resultEl.innerHTML = `<div class="error-box">לא זוהתה התאמה ברורה לאף משאב. נסו לתאר את הסיטואציה בפירוט רב יותר — למשל אילו תחושות, קשיים או התנהגויות אתם רואים.</div>`;
+    return;
+  }
+
+  const stageId = selSituationStage || 'during';
+  const stageWasAssumed = !selSituationStage;
+
+  const main = resourceById(top.id);
+  const secondaryOk = second && second.score > 0 && second.score >= top.score * 0.6;
+
+  const suggestions = SPACES.map(sp=>({
+    space: sp.id,
+    stage: stageId,
+    resource_id: top.id,
+    text: ACTIONS[top.id][stageId][sp.id],
+  }));
+
+  renderSituationResult({
+    resource_id: top.id,
+    secondary_resource_id: secondaryOk ? second.id : null,
+    matchedTerms: top.matched,
+    stageId,
+    stageWasAssumed,
+    suggestions,
+  });
+}
+
+function renderSituationResult(parsed){
+  const el = document.getElementById('situation-result');
+  const main = resourceById(parsed.resource_id);
+  if(!main){ el.innerHTML = '<div class="error-box">לא הצלחנו לזהות משאב מתאים. נסו לתאר את הסיטואציה בפירוט רב יותר.</div>'; return; }
+
+  const st = stageById(parsed.stageId);
+  const secondary = parsed.secondary_resource_id ? resourceById(parsed.secondary_resource_id) : null;
+
+  let reasoning = `זיהינו בתיאור שלכם ביטויים הקשורים למשאב <strong>${main.name}</strong>`;
+  if(parsed.matchedTerms && parsed.matchedTerms.length){
+    reasoning += ` (בין היתר: ${parsed.matchedTerms.slice(0,4).join(', ')})`;
+  }
+  reasoning += '.';
+  if(secondary){
+    reasoning += ` יש גם סימנים לשחיקה במשאב <strong>${secondary.name}</strong> — כדאי לשים לב גם אליו.`;
+  }
+  reasoning += parsed.stageWasAssumed
+    ? ` לא צויין שלב במעגל השירות, לכן הפעולות המוצעות מתייחסות לשלב "${st.name}" כברירת מחדל — אפשר לבחור שלב אחר למעלה ולנתח שוב.`
+    : ` הפעולות המוצעות מתייחסות לשלב שבחרתם: "${st.name}".`;
+
+  let html = `<div class="diagnosis" style="border-right:5px solid ${main.color}">
+    <div class="who">המשאב שככל הנראה נשחק</div>
+    <h3>${main.name}</h3>
+    <p class="reasoning">${reasoning}</p>`;
+
+  if(parsed.suggestions && parsed.suggestions.length){
+    html += '<ul class="sugg-list">';
+    parsed.suggestions.forEach(s=>{
+      const stg = stageById(s.stage);
+      const sp = spaceById(s.space);
+      const res = resourceById(s.resource_id) || main;
+      html += `<li>
+        <span class="tag" style="background:${res.color};color:#F7F5EE;">${res.name}</span>
+        <span class="tag">${stg?stg.name:''}</span>
+        <span class="tag">${sp?sp.role:''}</span>
+        <br>${s.text}
+      </li>`;
+    });
+    html += '</ul>';
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ---------- TAB C: resource ----------
+renderChips('resource-choices', RESOURCES, r=>r.name, null, r=>{ renderResourceResults(r.id); });
+
+function renderResourceResults(resourceId){
+  const el = document.getElementById('resource-results');
+  const r = resourceById(resourceId);
+  let html = `<p class="panel-sub" style="margin-bottom:18px;"><strong>${r.name}:</strong> ${r.desc}</p>`;
+  STAGES.forEach(st=>{
+    html += `<div class="stage-group"><h4>${st.name}</h4><div class="space-row">`;
+    SPACES.forEach(sp=>{
+      const action = ACTIONS[r.id][st.id][sp.id];
+      html += `<div class="space-cell">
+        <div class="space-label">${sp.role}</div>
+        <p>${action}</p>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  el.innerHTML = html;
+}
+</script>
+</body>
+</html>
